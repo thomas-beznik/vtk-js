@@ -1,5 +1,9 @@
 import macro from 'vtk.js/Sources/macro';
 
+import vtkScaledSphereHandleRepresentation from 'vtk.js/Sources/Widgets/Representations/ScaledSphereHandleRepresentation';
+
+const { attachScaleListener } = vtkScaledSphereHandleRepresentation;
+
 export default function widgetBehavior(publicAPI, model) {
   model.classHierarchy.push('vtkPolyLineWidgetProp');
   let isDragging = null;
@@ -178,4 +182,6 @@ export default function widgetBehavior(publicAPI, model) {
     model.widgetManager.enablePicking();
     model.interactor.render();
   };
+
+  attachScaleListener(publicAPI, model);
 }

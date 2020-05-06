@@ -2,7 +2,7 @@ import macro from 'vtk.js/Sources/macro';
 import vtkAbstractWidgetFactory from 'vtk.js/Sources/Widgets/Core/AbstractWidgetFactory';
 import vtkPlanePointManipulator from 'vtk.js/Sources/Widgets/Manipulators/PlaneManipulator';
 import vtkPolyLineRepresentation from 'vtk.js/Sources/Widgets/Representations/PolyLineRepresentation';
-import vtkSphereHandleRepresentation from 'vtk.js/Sources/Widgets/Representations/SphereHandleRepresentation';
+import vtkScaledSphereHandleRepresentation from 'vtk.js/Sources/Widgets/Representations/ScaledSphereHandleRepresentation';
 import vtkSVGLandmarkRepresentation from 'vtk.js/Sources/Widgets/SVG/SVGLandmarkRepresentation';
 
 import widgetBehavior from 'vtk.js/Sources/Widgets/Widgets3D/PolyLineWidget/behavior';
@@ -38,9 +38,12 @@ function vtkPolyLineWidget(publicAPI, model) {
       case ViewTypes.VOLUME:
       default:
         return [
-          { builder: vtkSphereHandleRepresentation, labels: ['handles'] },
+          { builder: vtkScaledSphereHandleRepresentation, labels: ['handles'] },
           { builder: vtkSVGLandmarkRepresentation, labels: ['handles'] },
-          { builder: vtkSphereHandleRepresentation, labels: ['moveHandle'] },
+          {
+            builder: vtkScaledSphereHandleRepresentation,
+            labels: ['moveHandle'],
+          },
           {
             builder: vtkPolyLineRepresentation,
             labels: ['handles', 'moveHandle'],
