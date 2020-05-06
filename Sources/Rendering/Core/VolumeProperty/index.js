@@ -3,7 +3,7 @@ import vtkColorTransferFunction from 'vtk.js/Sources/Rendering/Core/ColorTransfe
 import vtkPiecewiseFunction from 'vtk.js/Sources/Common/DataModel/PiecewiseFunction';
 import Constants from 'vtk.js/Sources/Rendering/Core/VolumeProperty/Constants';
 
-const { InterpolationType } = Constants;
+const { InterpolationType, OpacityMode } = Constants;
 const { vtkErrorMacro } = macro;
 
 const VTK_MAX_VRCOMP = 4;
@@ -247,6 +247,8 @@ function vtkVolumeProperty(publicAPI, model) {
 const DEFAULT_VALUES = {
   independentComponents: true,
   interpolationType: InterpolationType.FAST_LINEAR,
+  opacityMode: OpacityMode.FRACTIONAL,
+  proportionalComponent: -1,
   shade: 0,
   ambient: 0.1,
   diffuse: 0.7,
@@ -288,6 +290,8 @@ export function extend(publicAPI, model, initialValues = {}) {
   macro.setGet(publicAPI, model, [
     'independentComponents',
     'interpolationType',
+    'opacityMode',
+    'proportionalComponent',
     'shade',
     'ambient',
     'diffuse',

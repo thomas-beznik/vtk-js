@@ -33,6 +33,9 @@ varying vec3 vertexVCVSOutput;
 // possibly define vtkIndependentComponents
 //VTK::IndependentComponentsOn
 
+// possibly define the "proportional" component
+//VTK::vtkProportionalComponent
+
 // Define the blend mode to use
 #define vtkBlendMode //VTK::BlendMode
 
@@ -331,6 +334,8 @@ mat4 computeMat4Normal(vec3 pos, vec4 tValue, vec3 tstep)
     result[0].xyz /= result[0].w;
   }
 
+// optionally compute the 2nd component
+#if vtkNumComponents >= 2
   result[1].xyz = vec3(distX.g, distY.g, distZ.g);
   result[1].a = length(result[1].xyz);
   result[1].xyz *= rot;
@@ -338,6 +343,7 @@ mat4 computeMat4Normal(vec3 pos, vec4 tValue, vec3 tstep)
   {
     result[1].xyz /= result[1].w;
   }
+#endif
 
 // optionally compute the 3rd component
 #if vtkNumComponents >= 3
@@ -489,13 +495,25 @@ vec4 getColorForValue(vec4 tValue, vec3 posIS, vec3 tstep)
     vec4 tColor = mix0*texture2D(ctexture, vec2(tValue.r * cscale0 + cshift0, height0));
     tColor.a = goFactor.x*mix0*texture2D(otexture, vec2(tValue.r * oscale0 + oshift0, height0)).r;
     vec3 tColor1 = mix1*texture2D(ctexture, vec2(tValue.g * cscale1 + cshift1, height1)).rgb;
-    tColor.a += goFactor.y*mix1*texture2D(otexture, vec2(tValue.g * oscale1 + oshift1, height1)).r;
+    #if !defined(vtkProportionalComponent) || vtkProportionalComponent != 1
+      tColor.a += goFactor.y*mix1*texture2D(otexture, vec2(tValue.g * oscale1 + oshift1, height1)).r;
+    #else
+      tColor1 *= texture2D(otexture, vec2(tValue.g * oscale1 + oshift1, height1)).r;
+    #endif
   #if vtkNumComponents >= 3
     vec3 tColor2 = mix2*texture2D(ctexture, vec2(tValue.b * cscale2 + cshift2, height2)).rgb;
-    tColor.a += goFactor.z*mix2*texture2D(otexture, vec2(tValue.b * oscale2 + oshift2, height2)).r;
+    #if !defined(vtkProportionalComponent) || vtkProportionalComponent != 2
+      tColor.a += goFactor.z*mix2*texture2D(otexture, vec2(tValue.b * oscale2 + oshift2, height2)).r;
+    #else
+      tColor2 *= texture2D(otexture, vec2(tValue.b * oscale2 + oshift2, height2)).r;
+    #endif
   #if vtkNumComponents >= 4
     vec3 tColor3 = mix3*texture2D(ctexture, vec2(tValue.a * cscale3 + cshift3, height3)).rgb;
-    tColor.a += goFactor.w*mix3*texture2D(otexture, vec2(tValue.a * oscale3 + oshift3, height3)).r;
+    #if !defined(vtkProportionalComponent) || vtkProportionalComponent != 3
+      tColor.a += goFactor.w*mix3*texture2D(otexture, vec2(tValue.a * oscale3 + oshift3, height3)).r;
+    #else
+      tColor3 *= texture2D(otexture, vec2(tValue.a * oscale3 + oshift3, height3)).r;
+    #endif
   #endif
   #endif
 
